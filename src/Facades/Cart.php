@@ -9,7 +9,7 @@ class Cart extends Facade
 
     public static function getFacadeAccessor()
     {
-        return AsLong\Cart\Cart::class;
+        return \AsLong\Cart\Cart::class;
     }
 
 }
