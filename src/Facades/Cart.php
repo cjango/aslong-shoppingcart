@@ -1,10 +1,10 @@
 <?php
 
-namespace AsLong\Cart;
+namespace AsLong\Cart\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class CartFacade extends Facade
+class Cart extends Facade
 {
 
     public static function getFacadeAccessor()
