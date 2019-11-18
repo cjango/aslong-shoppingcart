@@ -179,13 +179,15 @@ class Cart
      * @Date: 2019/11/18 2:21 下午
      * @return mixed
      */
-    public function total()
+    public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
         $content = $this->getContent();
 
-        return $content->reduce(function ($total, Item $cartItem) {
+        $total = $content->reduce(function ($total, Item $cartItem) {
             return $total + ($cartItem->qty * $cartItem->price);
         }, 0);
+
+        return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -199,6 +201,31 @@ class Cart
         $content = $this->getContent();
 
         return $content->sum('qty');
+    }
+
+    /**
+     * Notes: 格式化价格结果
+     * @Author: <C.Jason>
+     * @Date: 2019/11/18 5:33 下午
+     * @param $value
+     * @param $decimals
+     * @param $decimalPoint
+     * @param $thousandSeperator
+     * @return string
+     */
+    private function numberFormat($value, $decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        if (is_null($decimals)) {
+            $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
+        }
+        if (is_null($decimalPoint)) {
+            $decimalPoint = is_null(config('cart.format.decimal_point')) ? '.' : config('cart.format.decimal_point');
+        }
+        if (is_null($thousandSeperator)) {
+            $thousandSeperator = is_null(config('cart.format.thousand_seperator')) ? ',' : config('cart.format.thousand_seperator');
+        }
+
+        return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
     }
 
 }
