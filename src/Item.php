@@ -10,29 +10,53 @@ use Illuminate\Contracts\Support\Jsonable;
 class Item implements Arrayable, Jsonable
 {
 
+    /**
+     * @var string
+     */
     public $rowId;
 
+    /**
+     * @var string | null
+     */
+    public $cartable;
+
+    /**
+     * @var int
+     */
     public $id;
 
+    /**
+     * @var float
+     */
     public $price;
 
+    /**
+     * @var int
+     */
     public $qty;
 
+    /**
+     * @var int
+     */
     public $seller;
 
+    /**
+     * @var array | null
+     */
     public $options;
 
-    public function __construct($id, $price, $seller, array $options = [])
+    public function __construct($id, $price, $seller, array $options = [], $cartable = null)
     {
-        $this->id      = $id;
-        $this->price   = $price;
-        $this->seller  = $seller;
-        $this->options = $options;
-        $this->rowId   = $this->generateRowId($id, $options);
+        $this->rowId    = $this->generateRowId($id, $options);
+        $this->id       = $id;
+        $this->price    = $price;
+        $this->seller   = $seller;
+        $this->options  = $options;
+        $this->cartable = $cartable;
     }
 
     /**
-     * 生成每个用户唯一的行号
+     * 生成唯一的行号
      * @param string $id
      * @param array $options
      * @return string
@@ -44,19 +68,45 @@ class Item implements Arrayable, Jsonable
         return md5($id . serialize($options));
     }
 
+    /**
+     * Notes: 通过buyable创建新的实例
+     * @Author: <C.Jason>
+     * @Date: 2019/11/19 11:07 上午
+     * @param Buyable $item
+     * @param array $options
+     * @return Item
+     */
     static function fromBuyable(Buyable $item, array $options = [])
     {
-        return new self($item->getBuyableIdentifier($options), $item->getBuyablePrice($options), $item->getSellerIdentifier(), $options);
+        return new self(
+            $item->getBuyableIdentifier($options),
+            $item->getBuyablePrice($options),
+            $item->getSellerIdentifier(),
+            $options,
+            get_class($item),
+        );
     }
 
+    /**
+     * Notes: 通过属性，创建新的实例
+     * @Author: <C.Jason>
+     * @Date: 2019/11/19 11:07 上午
+     * @param $id
+     * @param $price
+     * @param $seller
+     * @param array $options
+     * @return Item
+     */
     public static function fromAttributes($id, $price, $seller, array $options = [])
     {
         return new self($id, $price, $seller, $options);
     }
 
     /**
-     * Set the quantity for this cart item.
-     * @param int|float $qty
+     * Notes: 设置数量
+     * @Author: <C.Jason>
+     * @Date: 2019/11/19 11:06 上午
+     * @param $qty
      */
     public function setQuantity($qty)
     {
@@ -66,6 +116,13 @@ class Item implements Arrayable, Jsonable
         $this->qty = $qty;
     }
 
+    /**
+     * Notes: 魔术方法
+     * @Author: <C.Jason>
+     * @Date: 2019/11/19 11:06 上午
+     * @param $attr
+     * @return float|int|null
+     */
     public function __get($attr)
     {
         if (property_exists($this, $attr)) {
@@ -93,9 +150,22 @@ class Item implements Arrayable, Jsonable
     }
 
     /**
-     * Convert the object to its JSON representation.
+     * Notes: 不进行格式化的总价
+     * @Author: <C.Jason>
+     * @Date: 2019/11/19 11:15 上午
+     * @return float|int
+     */
+    function totalOrigin()
+    {
+        return $this->qty * $this->price;
+    }
+
+    /**
+     * Notes: 将结果转换为json
+     * @Author: <C.Jason>
+     * @Date: 2019/11/19 11:09 上午
      * @param int $options
-     * @return string
+     * @return false|string
      */
     public function toJson($options = 0)
     {
@@ -103,18 +173,22 @@ class Item implements Arrayable, Jsonable
     }
 
     /**
-     * Get the instance as an array.
+     * Notes: 将实例转换为array
+     * @Author: <C.Jason>
+     * @Date: 2019/11/19 11:08 上午
      * @return array
      */
     public function toArray()
     {
         return [
-            'id'      => $this->id,
-            'qty'     => $this->qty,
-            'price'   => $this->numberFormat($this->price),
-            'seller'  => $this->seller,
-            'options' => $this->options,
-            'total'   => $this->total(),
+            'row_id'   => $this->rowId,
+            'cartable' => $this->cartable,
+            'id'       => $this->id,
+            'qty'      => $this->qty,
+            'price'    => $this->numberFormat($this->price),
+            'seller'   => $this->seller,
+            'options'  => $this->options,
+            'total'    => $this->total(),
         ];
     }
 

@@ -82,7 +82,9 @@ class Cart
      */
     public function add(Buyable $buyable, $qty = null, $options = [])
     {
-        return $this->add($buyable, $qty, $options);
+        $item = Item::fromBuyable($buyable);
+
+        return $this->addToCart($item, $qty);
     }
 
     /**
@@ -98,15 +100,27 @@ class Cart
      */
     public function addById($id, $qty = null, $price = null, $seller = null, array $options = [])
     {
-        if ($id instanceof Buyable) {
-            $item = Item::fromBuyable($id);
-        } elseif (is_numeric($id)) {
+        if (is_numeric($id)) {
             $item = Item::fromAttributes($id, $price, $seller, $options);
         } else {
             throw new CartException('选购商品有误');
         }
 
-        $item->setQuantity($qty ?: 1);
+        return $this->addToCart($item, $qty);
+    }
+
+    /**
+     * Notes: 将Item加入到购物车
+     * @Author: <C.Jason>
+     * @Date: 2019/11/19 10:44 上午
+     * @param Item $item
+     * @param $qty
+     * @return Item
+     */
+    protected function addToCart(Item $item, $qty)
+    {
+        $qty = $qty ?: 1;
+        $item->setQuantity($qty);
 
         $content = $this->getContent();
         if ($content->has($item->rowId)) {
@@ -191,6 +205,21 @@ class Cart
     }
 
     /**
+     * Notes: 不进行格式化的购物车总额
+     * @Author: <C.Jason>
+     * @Date: 2019/11/19 11:16 上午
+     * @return mixed
+     */
+    public function totalOrigin()
+    {
+        $content = $this->getContent();
+
+        return $content->reduce(function ($total, Item $cartItem) {
+            return $total + ($cartItem->qty * $cartItem->price);
+        }, 0);
+    }
+
+    /**
      * Notes: 返回购物车商品数量
      * @Author: <C.Jason>
      * @Date: 2019/11/18 2:22 下午
@@ -201,6 +230,24 @@ class Cart
         $content = $this->getContent();
 
         return $content->sum('qty');
+    }
+
+    public function __get($attribute)
+    {
+        switch ($attribute) {
+            case  'count':
+                return $this->count();
+                break;
+            case  'total':
+                return $this->total();
+                break;
+            case  'totalOrigin':
+                return $this->totalOrigin();
+                break;
+            default:
+                return null;
+                break;
+        }
     }
 
     /**
