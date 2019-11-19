@@ -214,9 +214,11 @@ class Cart
     {
         $content = $this->getContent();
 
-        return $content->reduce(function ($total, Item $cartItem) {
-            return $total + ($cartItem->qty * $cartItem->price);
+        $total = $content->reduce(function ($total, Item $cartItem) {
+            return bcadd($total, bcmul($cartItem->qty, $cartItem->price, 2), 2);
         }, 0);
+
+        return floatval($total);
     }
 
     /**

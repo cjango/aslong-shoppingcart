@@ -155,9 +155,9 @@ class Item implements Arrayable, Jsonable
      * @Date: 2019/11/19 11:15 上午
      * @return float|int
      */
-    function totalOrigin()
+    public function totalOrigin()
     {
-        return $this->qty * $this->price;
+        return floatval(bcmul($this->qty, $this->price, 2));
     }
 
     /**
