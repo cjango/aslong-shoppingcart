@@ -4,6 +4,7 @@ namespace AsLong\Cart;
 
 use AsLong\Cart\Contracts\ShouldCart;
 use AsLong\Cart\Exceptions\CartException;
+use AsLong\Cart\Utils\Helper;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 
@@ -149,7 +150,7 @@ class Item implements Arrayable, Jsonable
      */
     public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
-        return $this->numberFormat($this->qty * $this->price, $decimals, $decimalPoint, $thousandSeperator);
+        return Helper::numberFormat($this->qty * $this->price, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -193,31 +194,6 @@ class Item implements Arrayable, Jsonable
             'options'  => $this->options,
             'total'    => $this->total(),
         ];
-    }
-
-    /**
-     * Notes: 格式化价格结果
-     * @Author: <C.Jason>
-     * @Date: 2019/11/18 5:33 下午
-     * @param $value
-     * @param $decimals
-     * @param $decimalPoint
-     * @param $thousandSeperator
-     * @return string
-     */
-    private function numberFormat($value, $decimals = null, $decimalPoint = null, $thousandSeperator = null)
-    {
-        if (is_null($decimals)) {
-            $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
-        }
-        if (is_null($decimalPoint)) {
-            $decimalPoint = is_null(config('cart.format.decimal_point')) ? '.' : config('cart.format.decimal_point');
-        }
-        if (is_null($thousandSeperator)) {
-            $thousandSeperator = is_null(config('cart.format.thousand_seperator')) ? ',' : config('cart.format.thousand_seperator');
-        }
-
-        return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
     }
 
 }
