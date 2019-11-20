@@ -2,7 +2,7 @@
 
 namespace AsLong\Cart;
 
-use AsLong\Cart\Contracts\Buyable;
+use AsLong\Cart\Contracts\ShouldCart;
 use AsLong\Cart\Drivers\Database;
 use AsLong\Cart\Exceptions\CartException;
 use Illuminate\Support\Collection;
@@ -75,14 +75,14 @@ class Cart
      * Notes: 通过 Buyable 快速加入购物车
      * @Author: <C.Jason>
      * @Date: 2019/11/18 4:06 下午
-     * @param Buyable $buyable
+     * @param ShouldCart $cartable
      * @param null $qty
      * @param array $options
      * @return Item
      */
-    public function add(Buyable $buyable, $qty = null, $options = [])
+    public function add(ShouldCart $cartable, $qty = null, $options = [])
     {
-        $item = Item::fromBuyable($buyable);
+        $item = Item::fromBuyable($cartable);
 
         return $this->addToCart($item, $qty);
     }

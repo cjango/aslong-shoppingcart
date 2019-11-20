@@ -2,7 +2,7 @@
 
 namespace AsLong\Cart;
 
-use AsLong\Cart\Contracts\Buyable;
+use AsLong\Cart\Contracts\ShouldCart;
 use AsLong\Cart\Exceptions\CartException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -72,18 +72,18 @@ class Item implements Arrayable, Jsonable
      * Notes: 通过buyable创建新的实例
      * @Author: <C.Jason>
      * @Date: 2019/11/19 11:07 上午
-     * @param Buyable $item
+     * @param ShouldCart $cartable
      * @param array $options
      * @return Item
      */
-    static function fromBuyable(Buyable $item, array $options = [])
+    static function fromBuyable(ShouldCart $cartable, array $options = [])
     {
         return new self(
-            $item->getBuyableIdentifier($options),
-            $item->getBuyablePrice($options),
-            $item->getSellerIdentifier(),
+            $cartable->getBuyableIdentifier($options),
+            $cartable->getBuyablePrice($options),
+            $cartable->getSellerIdentifier(),
             $options,
-            get_class($item),
+            get_class($cartable),
         );
     }
 
@@ -142,6 +142,9 @@ class Item implements Arrayable, Jsonable
      * Notes: 获取价格
      * @Author: <C.Jason>
      * @Date: 2019/11/18 2:30 下午
+     * @param null $decimals
+     * @param null $decimalPoint
+     * @param null $thousandSeperator
      * @return float|int
      */
     public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)

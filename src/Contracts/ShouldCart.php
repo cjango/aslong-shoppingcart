@@ -2,7 +2,7 @@
 
 namespace AsLong\Cart\Contracts;
 
-interface Buyable
+interface ShouldCart
 {
 
     /**
