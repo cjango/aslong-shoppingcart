@@ -80,8 +80,8 @@ class Item implements Arrayable, Jsonable
     static function fromBuyable(ShouldCart $cartable, array $options = [])
     {
         return new self(
-            $cartable->getBuyableIdentifier($options),
-            $cartable->getBuyablePrice($options),
+            $cartable->getCartableIdentifier($options),
+            $cartable->getCartablePrice($options),
             $cartable->getSellerIdentifier(),
             $options,
             get_class($cartable),

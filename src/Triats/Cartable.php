@@ -12,7 +12,7 @@ trait Cartable
      * @param null $options
      * @return mixed
      */
-    public function getBuyableIdentifier($options = null)
+    public function getCartableIdentifier($options = null)
     {
         return $this->id;
     }
@@ -24,7 +24,7 @@ trait Cartable
      * @param null $options
      * @return mixed
      */
-    public function getBuyablePrice($options = null)
+    public function getCartablePrice($options = null)
     {
         return $this->price;
     }
