@@ -6,6 +6,7 @@ use AsLong\Cart\Contracts\ShouldCart;
 use AsLong\Cart\Drivers\Database;
 use AsLong\Cart\Exceptions\CartException;
 use AsLong\Cart\Utils\Helper;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -40,8 +41,8 @@ class Cart
      */
     public function user($user)
     {
-        if ($user instanceOf JWTSubject) {
-            $this->user = $user->getJWTIdentifier();
+        if ($user instanceOf Authenticatable) {
+            $this->user = $user->getAuthIdentifier();
         } elseif (is_numeric($user)) {
             $this->user = $user;
         } else {
