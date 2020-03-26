@@ -13,8 +13,8 @@
         "laravel/framework": "*"
     },
     "autoload": {
-        "psr-0": {
-            "AsLong\\Cart": "src/"
+        "psr-4": {
+            "AsLong\\": "src/Cart/"
         }
     },
     "extra": {
